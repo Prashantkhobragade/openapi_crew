@@ -82,6 +82,7 @@ interpret_user_request_task = Task(
     agent = user_request_interpreter_agent
 )
 
+BASE_URL = "http://localhost:8000/"
 interpret_and_generate_json_task = Task(
     description="Analyze user requests, determine the appropriate API endpoint, and generate a JSON output for API call",
     expected_output="A JSON string containing API call response.",
