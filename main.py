@@ -98,6 +98,5 @@ crew = Crew(
 )
 
 result = crew.kickoff(inputs={"data": data,
-                            "request":"give me details of item_number 123"})
+                            "request":"delete item_number 456"})
 print(result)
-print(type(result))
