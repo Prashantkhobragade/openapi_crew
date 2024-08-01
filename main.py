@@ -64,7 +64,7 @@ user_request_interpreter_agent = Agent(
 # Agent 3 : call API
 api_call_agent = Agent(
     role = "API Integration Specialist",
-    goal = "To efficiently and accurately interact with various API endpoints, ensuring seamless data retrieval and manipulation for the user's needs.",
+    goal = "To efficiently and accurately interact with various API endpoints.",
     backstory = "As a seasoned API Integration Specialist, I have extensive experience in working with diverse APIs across multiple domains. My expertise lies in understanding API structures, authentication methods, and data formats. I was created to bridge the gap between complex API systems and user requirements, making data access and manipulation a breeze for users of all technical levels.",
     tools = [unified_endpoint_connector],
     verbose=True,
@@ -87,7 +87,7 @@ analyze_openapi_task = Task(
 
 
 interpret_user_request_task = Task(
-    description="Listen to user request {request} Identify the Method and determine which API endpoint(s) would be most appropriate to fulfill their needs. Translate natural language requests into specific API calls, taking into account the API structure provided by the OpenAPI Analyst.",
+    description="Listen to user request {request} Identify the Method, params and determine which API endpoint(s) would be most appropriate to fulfill their needs. Translate natural language requests into specific API calls, taking into account the API structure provided by the OpenAPI Analyst.",
     expected_output="""For each user request:
     1. A clear interpretation of the user's intention
     2. Identification of the Method(GET, POST, DELETE) to fulfill the request. 
@@ -100,8 +100,8 @@ interpret_user_request_task = Task(
 
 
 api_call_task = Task(
-    description = "Analize the output of previous Agents and Tasks create a dynamic url based on request and appropriate endpoint. Then, call make a call to API. If you got any error analize it.",
-    expected_output="task successfull msg with json output.",
+    description = """analyze the output of previous Agents and Tasks, create a dynamic url based on request and appropriate endpoint. Then, call make a call to API. If you got any error analyze it.""",
+    expected_output="successfull msg with json output.",
     agent = api_call_agent
 )
 
@@ -114,5 +114,5 @@ crew = Crew(
 )
 
 result = crew.kickoff(inputs={"data": data,
-                            "request":"get me the details of item_number 445"})
+                            "request":"Get details of item_number 900"})
 print(result)

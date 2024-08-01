@@ -39,5 +39,5 @@ def unified_endpoint_connector(method: str, endpoint: str, params: dict = None) 
         return {"error": str(e)}
 
 
-#result = unified_endpoint_connector(method="GET", endpoint="/items/{item_number}", params={"item_number": 111})
+#result = unified_endpoint_connector(method="POST", endpoint="/items/", params={"item_number":111, "item_name": "ygftde", "value":100})
 #print(result)
