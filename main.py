@@ -80,13 +80,14 @@ interpret_user_request_task = Task(
     2. Identification of the Method(GET, POST, DELETE) to fulfill the request. 
     3. Identification of the most appropriate API endpoint(s) to fulfill the request
     4. Any required parameters or request body data needed for the API call
+    5. A JSON output which contains information extracted from above Foure points.
     """,
     agent = user_request_interpreter_agent
 )
 
 
 interpret_and_generate_json_task = Task(
-    description="Analyze user requests,Identify the Method and determine the appropriate API endpoint, and generate a JSON output for API call",
+    description="Analyze JSON output given by previous task, Identify the Method and determine the appropriate API endpoint, and generate a JSON output for API call",
     expected_output="A JSON string containing API call response.",
     agent = user_request_interpreter_agent
 )
