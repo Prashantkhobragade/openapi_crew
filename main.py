@@ -50,7 +50,10 @@ openapi_analyst_agent = Agent(
 #Agent 2: User Request Interpreter
 user_request_interpreter_agent = Agent(
     role="User Request Interpreter, API Matcher and Json output generator",
-    goal="Interpret user request {request}, Identify the Method and match them to appropriate API endpoints based on the OpenAPI specification and generate Json output for API calls",
+    goal="""Interpret user request {request}, Identify the Method, params and match them to appropriate API endpoints based on 
+            the OpenAPI specification, Identify and construct an appropriate API request call based on the user's request using the provided OpenAPI specification. 
+            Then, execute the API call using the tool.
+            Ensure the agent parses the user's request accurately to identify the correct API endpoint and parameters.""",
     backstory="With a background in both natural language processing and API integration, you excel at translating user requests into structured data. Your 10 years of experience in building conversational AI systems that interact with complex APIs have made you an expert in generating precise JSON outputs for various API interactions.",
     tools = [unified_endpoint_connector],
     verbose=True,
@@ -58,7 +61,16 @@ user_request_interpreter_agent = Agent(
     allow_delegation=False
 )
 
-
+# Agent 3 : call API
+api_call_agent = Agent(
+    role = "API Integration Specialist",
+    goal = "To efficiently and accurately interact with various API endpoints, ensuring seamless data retrieval and manipulation for the user's needs.",
+    backstory = "As a seasoned API Integration Specialist, I have extensive experience in working with diverse APIs across multiple domains. My expertise lies in understanding API structures, authentication methods, and data formats. I was created to bridge the gap between complex API systems and user requirements, making data access and manipulation a breeze for users of all technical levels.",
+    tools = [unified_endpoint_connector],
+    verbose=True,
+    llm=llm,
+    allow_delegation=False
+)
 
 #task
 analyze_openapi_task = Task(
@@ -68,7 +80,8 @@ analyze_openapi_task = Task(
     2. Purpose of each endpoint
     3. Required and optional parameters for each endpoint
     4. Request body structures where applicable
-    5. Response structures and status codes""",
+    5. Response structures and status codes
+    """,
     agent = openapi_analyst_agent
 )
 
@@ -86,20 +99,20 @@ interpret_user_request_task = Task(
 )
 
 
-interpret_and_generate_json_task = Task(
-    description="Analyze JSON output given by previous task, Identify the Method and determine the appropriate API endpoint, and generate a JSON output for API call",
-    expected_output="A JSON string containing API call response.",
-    agent = user_request_interpreter_agent
+api_call_task = Task(
+    description = "Analize the output of previous Agents and Tasks create a dynamic url based on request and appropriate endpoint. Then, call make a call to API. If you got any error analize it.",
+    expected_output="task successfull msg with json output.",
+    agent = api_call_agent
 )
 
 #crew
 crew = Crew(
-    agents=[openapi_analyst_agent, user_request_interpreter_agent],
-    tasks=[analyze_openapi_task, interpret_user_request_task],
+    agents=[openapi_analyst_agent, user_request_interpreter_agent, api_call_agent],
+    tasks=[analyze_openapi_task, interpret_user_request_task, api_call_task],
     proccess = Process.sequential,
     verbose=True
 )
 
 result = crew.kickoff(inputs={"data": data,
-                            "request":"get me the details of item_number 111"})
+                            "request":"get me the details of item_number 445"})
 print(result)
