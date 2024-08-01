@@ -6,7 +6,7 @@ from crewai import Agent, Task, Crew, Process
 from langchain_groq import ChatGroq
 import requests
 
-
+from tools.tool import unified_endpoint_connector
 
 # Replace 'your_file.json' with the name of your JSON file
 filename = 'openapi.json'
@@ -52,6 +52,7 @@ user_request_interpreter_agent = Agent(
     role="User Request Interpreter, API Matcher and Json generator",
     goal="Interpret user requests {request} and match them to appropriate API endpoints based on the OpenAPI specification and generate Json output for API calls",
     backstory="With a background in both natural language processing and API integration, you excel at translating user requests into structured data. Your 10 years of experience in building conversational AI systems that interact with complex APIs have made you an expert in generating precise JSON outputs for various API interactions.",
+    tools = [unified_endpoint_connector],
     verbose=True,
     llm=llm,
     allow_delegation=False
@@ -98,5 +99,5 @@ crew = Crew(
 )
 
 result = crew.kickoff(inputs={"data": data,
-                            "request":"delete item_number 456"})
+                            "request":"get me the details of item_number 111"})
 print(result)
