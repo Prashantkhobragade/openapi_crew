@@ -49,8 +49,8 @@ openapi_analyst_agent = Agent(
 
 #Agent 2: User Request Interpreter
 user_request_interpreter_agent = Agent(
-    role="User Request Interpreter, API Matcher and Json generator",
-    goal="Interpret user requests {request} and match them to appropriate API endpoints based on the OpenAPI specification and generate Json output for API calls",
+    role="User Request Interpreter, API Matcher and Json output generator",
+    goal="Interpret user request {request}, Identify the Method and match them to appropriate API endpoints based on the OpenAPI specification and generate Json output for API calls",
     backstory="With a background in both natural language processing and API integration, you excel at translating user requests into structured data. Your 10 years of experience in building conversational AI systems that interact with complex APIs have made you an expert in generating precise JSON outputs for various API interactions.",
     tools = [unified_endpoint_connector],
     verbose=True,
@@ -74,18 +74,19 @@ analyze_openapi_task = Task(
 
 
 interpret_user_request_task = Task(
-    description="Listen to user requests and determine which API endpoint(s) would be most appropriate to fulfill their needs. Translate natural language requests into specific API calls, taking into account the API structure provided by the OpenAPI Analyst.",
+    description="Listen to user request {request} Identify the Method and determine which API endpoint(s) would be most appropriate to fulfill their needs. Translate natural language requests into specific API calls, taking into account the API structure provided by the OpenAPI Analyst.",
     expected_output="""For each user request:
     1. A clear interpretation of the user's intention
-    2. Identification of the most appropriate API endpoint(s) to fulfill the request
-    3. Any required parameters or request body data needed for the API call
+    2. Identification of the Method(GET, POST, DELETE) to fulfill the request. 
+    3. Identification of the most appropriate API endpoint(s) to fulfill the request
+    4. Any required parameters or request body data needed for the API call
     """,
     agent = user_request_interpreter_agent
 )
 
 
 interpret_and_generate_json_task = Task(
-    description="Analyze user requests, determine the appropriate API endpoint, and generate a JSON output for API call",
+    description="Analyze user requests,Identify the Method and determine the appropriate API endpoint, and generate a JSON output for API call",
     expected_output="A JSON string containing API call response.",
     agent = user_request_interpreter_agent
 )
