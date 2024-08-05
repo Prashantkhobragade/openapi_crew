@@ -120,6 +120,9 @@ crew = Crew(
 )
 
 result = crew.kickoff(inputs={"data": data,
-                            "request":"Give me details of item_number 900"})
+                            "request":"Give me details of item_number 93"})
 print(result)
 
+"""
+Agents are running but not stoping, Find any way to stop them in write time.
+"""
