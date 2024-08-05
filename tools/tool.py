@@ -23,7 +23,7 @@ def unified_endpoint_connector(method: str, endpoint: str, params: dict = None) 
         endpoint = endpoint.format(**params)
 
     url = f"{BASE_URL}{endpoint}"
-    #print(url)
+    print(url)
     try:
         if method.lower() == "get":
             response = requests.get(url, params=params)
@@ -35,9 +35,15 @@ def unified_endpoint_connector(method: str, endpoint: str, params: dict = None) 
         response.raise_for_status()  # Raise an exception for HTTP errors
         return response.json()
     
+    except requests.exceptions.HTTPError as e:
+        if response.status_code == 404:
+            return {"error": "Client Error"}
+        else:
+            return {"error": str(e)}
+    
     except requests.exceptions.RequestException as e:
         return {"error": str(e)}
 
 
-#result = unified_endpoint_connector(method="POST", endpoint="/items/", params={"item_number":111, "item_name": "ygftde", "value":100})
+#result = unified_endpoint_connector(method="GET", endpoint="/items/{item_number}",params={"item_number": 90})
 #print(result)

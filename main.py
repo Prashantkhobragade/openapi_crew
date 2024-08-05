@@ -49,22 +49,22 @@ openapi_analyst_agent = Agent(
 
 #Agent 2: User Request Interpreter
 user_request_interpreter_agent = Agent(
-    role="User Request Interpreter, API Matcher and Json output generator",
-    goal="""Interpret user request {request}, Identify the Method, params and match them to appropriate API endpoints based on 
-            the OpenAPI specification, Identify and construct an appropriate API request call based on the user's request using the provided OpenAPI specification. 
-            Then, execute the API call using the tool.
-            Ensure the agent parses the user's request accurately to identify the correct API endpoint and parameters.""",
+    role="User Request Interpreter, API Matcher",
+    goal="""Interpret user request {request}, identify the method, parameters, and match them to appropriate API endpoints based on 
+            the OpenAPI specification. Ensure the agent parses the user's request accurately to identify the correct API endpoint and parameters.""",
     backstory="With a background in both natural language processing and API integration, you excel at translating user requests into structured data. Your 10 years of experience in building conversational AI systems that interact with complex APIs have made you an expert in generating precise JSON outputs for various API interactions.",
-    tools = [unified_endpoint_connector],
+    #tools = [unified_endpoint_connector],
     verbose=True,
     llm=llm,
+    max_iter = 12,
     allow_delegation=False
 )
+
 
 # Agent 3 : call API
 api_call_agent = Agent(
     role = "API Integration Specialist",
-    goal = "To efficiently and accurately interact with various API endpoints.",
+    goal = """To efficiently and accurately interact with various API endpoints. and Ensure that the agent itself is handling errors gracefully and returning clear messages""",
     backstory = "As a seasoned API Integration Specialist, I have extensive experience in working with diverse APIs across multiple domains. My expertise lies in understanding API structures, authentication methods, and data formats. I was created to bridge the gap between complex API systems and user requirements, making data access and manipulation a breeze for users of all technical levels.",
     tools = [unified_endpoint_connector],
     verbose=True,
@@ -72,7 +72,10 @@ api_call_agent = Agent(
     allow_delegation=False
 )
 
+
+
 #task
+
 analyze_openapi_task = Task(
     description="Thoroughly analyze the provided OpenAPI JSON data. Understand all endpoints, their purposes, parameters, request bodies, and response structures. Create a detailed mental model of the API's capabilities, limitations, and overall structure.",
     expected_output="""A comprehensive breakdown of the API structure, including:
@@ -98,12 +101,15 @@ interpret_user_request_task = Task(
     agent = user_request_interpreter_agent
 )
 
-
 api_call_task = Task(
-    description = """analyze the output of previous Agents and Tasks, create a dynamic url based on request and appropriate endpoint. Then, call make a call to API. If you got any error analyze it.""",
-    expected_output="successfull msg with json output.",
+    description = """analyze the output of previous Agents and Tasks, create a dynamic url based on params and appropriate endpoint. 
+                    Then, make a call to API. 
+                    Ensure that errors are handled gracefully and return clear messages like if url is not found then return error: 404""",
+    expected_output="If the operation is successful, return a success message along with a JSON output containing only the request result. Otherwise, return an error message",
     agent = api_call_agent
 )
+
+
 
 #crew
 crew = Crew(
@@ -114,5 +120,6 @@ crew = Crew(
 )
 
 result = crew.kickoff(inputs={"data": data,
-                            "request":"Get details of item_number 900"})
+                            "request":"Give me details of item_number 900"})
 print(result)
+
