@@ -37,7 +37,7 @@ def unified_endpoint_connector(method: str, endpoint: str, params: dict = None) 
     
     except requests.exceptions.HTTPError as e:
         if response.status_code == 404:
-            return {"error": "Client Error"}
+            return {"error": "404: Client Error, url is invalid"}
         else:
             return {"error": str(e)}
     
