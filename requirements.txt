@@ -6,3 +6,4 @@ python-dotenv
 langchain
 crewai
 crewai[tools]
+streamlit
