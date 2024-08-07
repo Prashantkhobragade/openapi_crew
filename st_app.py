@@ -26,11 +26,6 @@ if uploaded_file is not None:
         # Read the JSON file and ensure it's a valid JSON object
         data = json.loads(uploaded_file.getvalue())
         st.success("JSON file successfully loaded!")
-        
-        # Display a sample of the loaded data
-        st.write("Sample of loaded data:")
-        st.json(dict(list(data.items())[:5]))  # Display first 5 items
-
     except json.JSONDecodeError:
         st.error("Invalid JSON file. Please upload a valid JSON file.")
         data = None
@@ -58,17 +53,17 @@ if uploaded_file is not None:
             goal="""Interpret user request {request}, identify the method, parameters, and match them to appropriate API endpoints based on 
                     the OpenAPI specification. Ensure the agent parses the user's request accurately to identify the correct API endpoint and params.""",
             backstory="With a background in both natural language processing and API integration, you excel at translating user requests into structured data. Your 10 years of experience in building conversational AI systems that interact with complex APIs have made you an expert in generating precise JSON outputs for various API interactions.",
-            #tools = [unified_endpoint_connector],
+            tools = [unified_endpoint_connector],
             verbose=True,
             llm=llm,
-            max_iter = 12,
+            #max_iter = 12,
             allow_delegation=False
         )
 
         api_call_agent = Agent(
             role = "API Integration Specialist",
             goal = """To efficiently and accurately interact with various API endpoints. and Ensure that the agent itself is handling errors gracefully 
-                        and returning clear messages and do not try something else once you got your answer""",
+                        and returning clear messages and do not try something else once you got right answer""",
             backstory = "As a seasoned API Integration Specialist, I have extensive experience in working with diverse APIs across multiple domains. My expertise lies in understanding API structures, authentication methods, and data formats. I was created to bridge the gap between complex API systems and user requirements, making data access and manipulation a breeze for users of all technical levels.",
             tools = [unified_endpoint_connector],
             verbose=True,
@@ -105,7 +100,7 @@ if uploaded_file is not None:
             description = """analyze the output of previous Agents and Tasks, create a dynamic url based on params and appropriate endpoint. 
                     Then, make a call to API. 
                     Ensure that errors are handled gracefully and return clear messages like if url is not found then return error: 404""",
-            expected_output="If the operation is successful, return a success message along with a JSON output containing only the request result. Otherwise, return an error message",
+            expected_output="The actual result of the API call, including success message or error details if applicable",
             agent = api_call_agent
         )
 
@@ -124,7 +119,18 @@ if uploaded_file is not None:
             with st.spinner("Processing your request..."):
                 try:
                     result = crew.kickoff(inputs={"data": data, "request": user_request, "base_url": base_url})
-                    st.json(result)
+                    """
+                    # Parse the result to extract the actual API response
+                    try:
+                        api_response = json.loads(result)
+                        st.json(api_response)
+                    except json.JSONDecodeError:
+                        st.write("API Response:", result)
+                    """
+                    # Display the full CrewAI process output for debugging
+                    with st.expander("View full CrewAI process output"):
+                        st.write(result)
+                    
                 except Exception as e:
                     st.error(f"An error occurred: {str(e)}")
                     st.write("Please check your inputs and try again.")
