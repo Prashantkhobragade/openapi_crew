@@ -47,18 +47,19 @@ if uploaded_file is not None:
         user_request_interpreter_agent = Agent(
             role="User Request Interpreter, API Matcher",
             goal="""Interpret user request {request}, identify the method, parameters, and match them to appropriate API endpoints based on 
-                    the OpenAPI specification. Ensure the agent parses the user's request accurately to identify the correct API endpoint and parameters.""",
+                    the OpenAPI specification. Ensure the agent parses the user's request accurately to identify the correct API endpoint and params.""",
             backstory="With a background in both natural language processing and API integration, you excel at translating user requests into structured data. Your 10 years of experience in building conversational AI systems that interact with complex APIs have made you an expert in generating precise JSON outputs for various API interactions.",
             #tools = [unified_endpoint_connector],
             verbose=True,
             llm=llm,
-            #max_iter = 12,
+            max_iter = 12,
             allow_delegation=False
         )
 
         api_call_agent = Agent(
             role = "API Integration Specialist",
-            goal = """To efficiently and accurately interact with various API endpoints. and Ensure that the agent itself is handling errors gracefully and returning clear messages""",
+            goal = """To efficiently and accurately interact with various API endpoints. and Ensure that the agent itself is handling errors gracefully 
+                        and returning clear messages and do not try something else once you got your answer""",
             backstory = "As a seasoned API Integration Specialist, I have extensive experience in working with diverse APIs across multiple domains. My expertise lies in understanding API structures, authentication methods, and data formats. I was created to bridge the gap between complex API systems and user requirements, making data access and manipulation a breeze for users of all technical levels.",
             tools = [unified_endpoint_connector],
             verbose=True,
