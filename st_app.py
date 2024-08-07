@@ -22,9 +22,18 @@ base_url = st.sidebar.text_input("Enter Base URL or API URL")
 uploaded_file = st.file_uploader("Choose a JSON file", type="json")
 
 if uploaded_file is not None:
-    # Read the JSON file
-    data = json.load(uploaded_file)
-    st.success("JSON file successfully loaded!")
+    try:
+        # Read the JSON file and ensure it's a valid JSON object
+        data = json.loads(uploaded_file.getvalue())
+        st.success("JSON file successfully loaded!")
+        
+        # Display a sample of the loaded data
+        st.write("Sample of loaded data:")
+        st.json(dict(list(data.items())[:5]))  # Display first 5 items
+
+    except json.JSONDecodeError:
+        st.error("Invalid JSON file. Please upload a valid JSON file.")
+        data = None
 
     # Initialize LLM
     if groq_api_key:
@@ -113,9 +122,14 @@ if uploaded_file is not None:
 
         if st.button("Process Request"):
             with st.spinner("Processing your request..."):
-                result = crew.kickoff(inputs={"data": data, "request": user_request, "base_url": base_url})
-                st.json(result)
-    else:
+                try:
+                    result = crew.kickoff(inputs={"data": data, "request": user_request, "base_url": base_url})
+                    st.json(result)
+                except Exception as e:
+                    st.error(f"An error occurred: {str(e)}")
+                    st.write("Please check your inputs and try again.")
+
+    elif not groq_api_key:
         st.warning("Please enter your GROQ API key in the sidebar.")
 else:
     st.info("Please upload a JSON file to begin.")
