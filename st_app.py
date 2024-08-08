@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process
 from langchain_groq import ChatGroq
 from tools.tool import unified_endpoint_connector
+from azureai import AzureAI
 
 # Load environment variables
 load_dotenv()

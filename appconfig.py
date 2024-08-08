@@ -28,7 +28,7 @@ class AppConfig:
 
     def load_production_env(self):
         env = AppEnv()
-
+        """
         hana = env.get_service(name=self.get_env_var('HANA_SERVICE_NAME', 'hana-schema'))
         if hana:
             self.HDB_USER = hana.credentials["user"]
@@ -37,7 +37,8 @@ class AppConfig:
             self.HDB_PORT = hana.credentials["port"]
         else:
             raise ValueError("HANA service not found. Please check your environment configuration.")
-
+        """
+        
         genai = env.get_service(name=self.get_env_var('AICORE_SERVICE_NAME', 'aicore'))
         if genai:
             self.SAP_PROVIDER_URL = f"{genai.credentials['url']}/oauth/token"

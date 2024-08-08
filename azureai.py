@@ -29,7 +29,8 @@ class AzureAI:
         self._token = token["access_token"]
         self._token_expires_at = token["expires_at"]
         return self._token
-
+    
+    """
     def get_embedding_client(self):
         token = self.get_token()
         embedding_client = AzureOpenAIEmbeddings(
@@ -40,7 +41,7 @@ class AzureAI:
             default_headers={"AI-Resource-Group": "default"}
             )
         return embedding_client
-
+        """
     def get_client(self):
         token = self.get_token()
         client = AzureChatOpenAI(
