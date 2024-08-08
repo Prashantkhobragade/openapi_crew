@@ -6,9 +6,18 @@ from crewai import Agent, Task, Crew, Process
 from langchain_groq import ChatGroq
 from tools.tool import unified_endpoint_connector
 from azureai import AzureAI
+from appconfig import AppConfig
 
 # Load environment variables
 load_dotenv()
+
+
+#creating an instance for app config
+config = AppConfig()
+
+#Create an instance of AzureAI using the config
+azure_ai = AzureAI(config)
+
 
 # Set page title
 st.set_page_config(page_title="CrewAI OpenAPI Analyzer")
@@ -32,6 +41,7 @@ if uploaded_file is not None:
         data = None
 
     # Initialize LLM
+    llm = azure_ai.get_client()
     if groq_api_key:
         llm = ChatGroq(
             model="llama3-groq-8b-8192-tool-use-preview",

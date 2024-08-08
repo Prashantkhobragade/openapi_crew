@@ -47,7 +47,7 @@ class AzureAI:
         client = AzureChatOpenAI(
             api_version=self.config.SAP_API_VERSION,
             api_key=token,
-            azure_deployment="gpt-4o",
+            azure_deployment=self.config.MODEL,
             azure_endpoint=self.config.SAP_ENDPOINT_URL_GPT4O,
             default_headers={"AI-Resource-Group": "default"}
         )
