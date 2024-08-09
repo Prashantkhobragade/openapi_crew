@@ -135,14 +135,7 @@ if uploaded_file is not None:
         with st.spinner("Processing your request..."):
             try:
                 result = crew.kickoff(inputs={"data": data, "request": user_request, "base_url": base_url})
-                """
-                # Parse the result to extract the actual API response
-                try:
-                    api_response = json.loads(result)
-                    st.json(api_response)
-                except json.JSONDecodeError:
-                    st.write("API Response:", result)
-                """
+
                 # Display the full CrewAI process output for debugging
                 with st.expander("View Complete output"):
                     st.write(result)
