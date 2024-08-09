@@ -20,8 +20,8 @@ azure_ai = AzureAI(config)
 
 
 # Set page title
-st.set_page_config(page_title="CrewAI OpenAPI Analyzer")
-st.title("🤖 CrewAI OpenAPI Analyzer")
+st.set_page_config(page_title="SmartAPI Connect")
+st.title("🤖 SmartAPI connect")
 
 # Sidebar for API key and base URL input
 st.sidebar.header("Configuration")
