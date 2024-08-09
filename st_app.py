@@ -25,7 +25,6 @@ st.title("🤖 SmartAPI connect")
 
 # Sidebar for API key and base URL input
 st.sidebar.header("Configuration")
-groq_api_key = st.sidebar.text_input("Enter GROQ API Key", type="password")
 base_url = st.sidebar.text_input("Enter Base URL or API URL")
 
 # File uploader for JSON file
@@ -146,7 +145,7 @@ if uploaded_file is not None:
                     st.write("API Response:", result)
                 """
                 # Display the full CrewAI process output for debugging
-                with st.expander("View full CrewAI process output"):
+                with st.expander("View full Complete output"):
                     st.write(result)
                     
             except Exception as e:
