@@ -42,15 +42,10 @@ if uploaded_file is not None:
 
     # Initialize LLM
     llm = azure_ai.get_client()
-    if groq_api_key:
-        llm = ChatGroq(
-            model="llama3-groq-8b-8192-tool-use-preview",
-            temperature=0.0,
-            api_key=groq_api_key
-        )
+    
 
-        # Define agents
-        openapi_analyst_agent = Agent(
+    # Define agents
+    openapi_analyst_agent = Agent(
             role="OpenAPI Specification Analyst",
             goal="""Analyze and interpret OpenAPI specifications data {data} to create a 
                     comprehensive understanding of the API structure""",
@@ -63,7 +58,7 @@ if uploaded_file is not None:
             allow_delegation=False
         )
 
-        user_request_interpreter_agent = Agent(
+    user_request_interpreter_agent = Agent(
             role="User Request Interpreter, API Matcher",
             goal="""Interpret user request {request}, identify the method, parameters, and match them to appropriate API endpoints based on 
                     the OpenAPI specification. Ensure the agent parses the user's request accurately to identify the correct API endpoint 
@@ -78,7 +73,7 @@ if uploaded_file is not None:
             allow_delegation=False
         )
 
-        api_call_agent = Agent(
+    api_call_agent = Agent(
             role = "API Integration Specialist",
             goal = """To efficiently and accurately interact with various API endpoints. and Ensure that the agent itself is 
                     handling errors gracefully and returning clear messages
@@ -94,8 +89,8 @@ if uploaded_file is not None:
             allow_delegation=False
         )
 
-        # Define tasks
-        analyze_openapi_task = Task(
+    # Define tasks
+    analyze_openapi_task = Task(
             description="Thoroughly analyze the provided OpenAPI JSON data. Understand all endpoints, their purposes, parameters, request bodies, and response structures. Create a detailed mental model of the API's capabilities, limitations, and overall structure.",
             expected_output="""A comprehensive breakdown of the API structure, including:
                 1. List of all available endpoints with their HTTP methods
@@ -107,7 +102,7 @@ if uploaded_file is not None:
             agent = openapi_analyst_agent
         )
 
-        interpret_user_request_task = Task(
+    interpret_user_request_task = Task(
             description="Listen to user request {request} Identify the Method, params and determine which API endpoint(s) would be most appropriate to fulfill their needs. Translate natural language requests into specific API calls, taking into account the API structure provided by the OpenAPI Analyst.",
             expected_output="""For each user request:
                 1. A clear interpretation of the user's intention
@@ -119,7 +114,7 @@ if uploaded_file is not None:
             agent = user_request_interpreter_agent
         )
 
-        api_call_task = Task(
+    api_call_task = Task(
             description = """analyze the output of previous Agents and Tasks, create a dynamic url based on params and appropriate endpoint. 
                     Then, make a call to API. 
                     Ensure that errors are handled gracefully and return clear messages like if url is not found then return error: 404""",
@@ -127,38 +122,37 @@ if uploaded_file is not None:
             agent = api_call_agent
         )
 
-        # Create crew
-        crew = Crew(
+    # Create crew
+    crew = Crew(
             agents=[openapi_analyst_agent, user_request_interpreter_agent, api_call_agent],
             tasks=[analyze_openapi_task, interpret_user_request_task, api_call_task],
             process=Process.sequential,
             verbose=True
         )
 
-        # User input for request
-        user_request = st.text_input("Enter your request:")
+    # User input for request
+    user_request = st.text_input("Enter your request:")
 
-        if st.button("Process Request"):
-            with st.spinner("Processing your request..."):
+    if st.button("Process Request"):
+        with st.spinner("Processing your request..."):
+            try:
+                result = crew.kickoff(inputs={"data": data, "request": user_request, "base_url": base_url})
+                """
+                # Parse the result to extract the actual API response
                 try:
-                    result = crew.kickoff(inputs={"data": data, "request": user_request, "base_url": base_url})
-                    """
-                    # Parse the result to extract the actual API response
-                    try:
-                        api_response = json.loads(result)
-                        st.json(api_response)
-                    except json.JSONDecodeError:
-                        st.write("API Response:", result)
-                    """
-                    # Display the full CrewAI process output for debugging
-                    with st.expander("View full CrewAI process output"):
-                        st.write(result)
+                    api_response = json.loads(result)
+                    st.json(api_response)
+                except json.JSONDecodeError:
+                    st.write("API Response:", result)
+                """
+                # Display the full CrewAI process output for debugging
+                with st.expander("View full CrewAI process output"):
+                    st.write(result)
                     
-                except Exception as e:
-                    st.error(f"An error occurred: {str(e)}")
-                    st.write("Please check your inputs and try again.")
+            except Exception as e:
+                st.error(f"An error occurred: {str(e)}")
+                st.write("Please check your inputs and try again.")
 
-    elif not groq_api_key:
-        st.warning("Please enter your GROQ API key in the sidebar.")
+
 else:
     st.info("Please upload a JSON file to begin.")
