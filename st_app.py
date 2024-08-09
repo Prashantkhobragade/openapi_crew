@@ -145,7 +145,7 @@ if uploaded_file is not None:
                     st.write("API Response:", result)
                 """
                 # Display the full CrewAI process output for debugging
-                with st.expander("View full Complete output"):
+                with st.expander("View Complete output"):
                     st.write(result)
                     
             except Exception as e:
