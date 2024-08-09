@@ -1,7 +1,8 @@
 import requests
 from crewai_tools import tool
 
-BASE_URL = "http://localhost:8000"
+#BASE_URL = "http://localhost:8000"
+base_url = ""
 
 @tool("unified_endpoint_connector")
 def unified_endpoint_connector(method: str, endpoint: str, params: dict = None) -> dict:
@@ -22,7 +23,7 @@ def unified_endpoint_connector(method: str, endpoint: str, params: dict = None) 
     if params:
         endpoint = endpoint.format(**params)
 
-    url = f"{BASE_URL}{endpoint}"
+    url = f"{base_url}{endpoint}"
     print(url)
     try:
         if method.lower() == "get":
@@ -45,5 +46,4 @@ def unified_endpoint_connector(method: str, endpoint: str, params: dict = None) 
         return {"error": str(e)}
 
 
-#result = unified_endpoint_connector(method="GET", endpoint="/items/{item_number}",params={"item_number": 90})
-#print(result)
+#BASE URL is Hard coded, need to work on it.
