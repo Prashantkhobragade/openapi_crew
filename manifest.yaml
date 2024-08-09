@@ -1,0 +1,8 @@
+applications:
+- name: openapianalyzeragent
+  random-route : true
+  path: ./
+  memory: 2048M
+  buildpacks:
+  - python_buildpack
+  command:  streamlit run main.py --server.port 8080 
