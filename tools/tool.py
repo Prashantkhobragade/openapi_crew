@@ -1,8 +1,8 @@
 import requests
 from crewai_tools import tool
 
-#BASE_URL = "http://localhost:8000"
-base_url = ""
+BASE_URL = "http://localhost:8000"
+#base_url = ""
 
 @tool("unified_endpoint_connector")
 def unified_endpoint_connector(method: str, endpoint: str, params: dict = None) -> dict:
@@ -18,7 +18,8 @@ def unified_endpoint_connector(method: str, endpoint: str, params: dict = None) 
         dict: The response from the server, parsed into a Python dictionary.
     
     """
-
+    if base_url is None:
+        base_url = get_base_url()
     # Replace placeholders in the endpoint with actual values from params
     if params:
         endpoint = endpoint.format(**params)

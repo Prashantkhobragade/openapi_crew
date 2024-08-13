@@ -26,6 +26,13 @@ st.title("🤖 SmartAPI connect")
 st.sidebar.header("Configuration")
 base_url = st.sidebar.text_input("Enter Base URL or API URL")
 
+# Function to get base_url
+def get_base_url():
+    return st.session_state.get('base_url', base_url)
+
+# Store base_url in session state
+st.session_state['base_url'] = base_url
+
 # File uploader for JSON file
 uploaded_file = st.file_uploader("Choose a JSON file", type="json")
 
@@ -55,6 +62,7 @@ if uploaded_file is not None:
             llm = llm,
             allow_delegation=False
         )
+    print("openapi_analyst_agent completed")
 
     user_request_interpreter_agent = Agent(
             role="User Request Interpreter, API Matcher",
@@ -70,6 +78,8 @@ if uploaded_file is not None:
             max_iter = 10,
             allow_delegation=False
         )
+    print("user_request_interpreter_agent completed")
+
 
     api_call_agent = Agent(
             role = "API Integration Specialist",
@@ -86,6 +96,8 @@ if uploaded_file is not None:
             max_iter = 10,
             allow_delegation=False
         )
+    print("api_call_agent completed")
+
 
     # Define tasks
     analyze_openapi_task = Task(
@@ -99,6 +111,8 @@ if uploaded_file is not None:
             """,
             agent = openapi_analyst_agent
         )
+    print("analyze_openapi_task completed")
+
 
     interpret_user_request_task = Task(
             description="Listen to user request {request} Identify the Method, params and determine which API endpoint(s) would be most appropriate to fulfill their needs. Translate natural language requests into specific API calls, taking into account the API structure provided by the OpenAPI Analyst.",
@@ -112,6 +126,8 @@ if uploaded_file is not None:
             agent = user_request_interpreter_agent
         )
 
+    print("interpret_user_request_task completed")
+
     api_call_task = Task(
             description = """analyze the output of previous Agents and Tasks, create a dynamic url based on params and appropriate endpoint. 
                     Then, make a call to API. 
@@ -119,6 +135,8 @@ if uploaded_file is not None:
             expected_output="The actual result of the API call, including success message or error details if applicable",
             agent = api_call_agent
         )
+    print("api_call_task completed")
+
 
     # Create crew
     crew = Crew(

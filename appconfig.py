@@ -55,12 +55,13 @@ class AppConfig:
         if value is None:
             raise ValueError(f"Missing required environment variable: {key}")
         return value
-
+    
     def to_json(self):
-        data = {key: value for key, value in self.__dict__.items() if not key.startswith('__')}
+        
+        data = {key: value for key, value in self.__dict__.items() if key is not None and not key.startswith('__')}
         return json.dumps(data, indent=4)
     
     def print_env(self):
         for key, value in os.environ.items():
             print(f"{key}={value}")
-
+    
